@@ -3,8 +3,6 @@ package application;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
-import java.util.logging.ErrorManager;
-
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,8 +31,6 @@ public class Main extends Application {
 
 	Stage window;
 	Scene scene1, scene2;
-	String sentence_to_server;
-	String sentence_from_server;
 
 	public static void Client(String[] args) {
 		launch(args);
@@ -56,7 +52,7 @@ public class Main extends Application {
 				if (newValue.intValue() > oldValue.intValue()) {
 					// Check if the new character is greater than 9
 					if (userName.getText().length() >= 9) {
-						// if it's 11th character then just setText to previous one
+						// if it's 10th character then just setText to previous one
 						userName.setText(userName.getText().substring(0, 9));
 					}
 				}
@@ -83,7 +79,7 @@ public class Main extends Application {
 		grid.add(new Label("Mật khẩu:"), 0, 2);
 		grid.add(pwBox, 1, 2);
 		grid.add(hbBtnLogin, 1, 4);
-		
+
 		final Text actionTarget = new Text();
 		grid.add(actionTarget, 0, 6, 2, 1);
 		actionTarget.setId("actionTarget");
@@ -99,20 +95,18 @@ public class Main extends Application {
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				sentence_to_server = userName.getText() + pwBox.getText();
-				// ...
-
-				if (sentence_from_server != "Wrong") {
-					window.setScene(scene2);
-				} else
-					errorMessage();
-			}
-
-			private void errorMessage() {
-				// TODO Auto-generated method stub
-				actionTarget.setVisible(true);
-				userName.setText("");
-				pwBox.setText("");
+				try {
+					if (accept_Client(userName.getText(), pwBox.getText()) != "Wrong") {
+						window.setScene(scene2);
+					} else {
+						actionTarget.setVisible(true);
+						userName.setText("");
+						pwBox.setText("");
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -176,38 +170,37 @@ public class Main extends Application {
 	}
 
 	private Socket connect() throws Exception {
-		// Tao socket ket noi den server cho phep ket noi o cong 8099.
+		// Tao socket ket noi den server cho phep ket noi o cong 8039.
 		Socket clientSocket = null;
-		clientSocket = new Socket("127.0.0.1", 8099);
+		clientSocket = new Socket("localhost", 8039);
 		System.out.println("Client is connected to socket server!");
 
 		return clientSocket;
 	}
 
-	private String connectToServer() throws Exception {
-		Socket clientSocket = connect();
-		String result = null;
-		String sentence_to_server;
-		String sentence_from_server;
-		// Tao luong ket noi den server.
-		try {
-			// Tao luong gui di.
-			DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-			// Tao luong nhan vao
-			DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
-			// Gui du lieu len server
-			outToServer.writeUTF("showAll");
-			System.out.println("socket.client.connectToServer()... send res \"showAll\"");
+	public String accept_Client(String userName, String passWord) throws Exception {
 
-			result = inFromServer.readUTF();
-			// Doc tu sever
-			System.out.println("Client receive:" + result);
-			clientSocket.close();
-		} catch (Exception e) {
-			System.out.println("socket.client.connectToServer()...Error in send, receive Client");
-			clientSocket.close();
-		}
+		// Client: tao socket ket noi den server cho phep ket noi o cong 8039
+		Socket socket = connect();
+
+		// Tao luong ket noi den sever
+		// Tao luon gui di
+		DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
+		// Tao luon nhan vao
+		DataInputStream inFromServer = new DataInputStream(socket.getInputStream());
+
+		outToServer.writeUTF(userName + passWord);// gui du lieu len server
+		String result = inFromServer.readUTF();
+		System.out.println("Server send: " + result);// doc tu sever
+		socket.close();
+		// handleReturnData(result);
 		return result;
+	}
+
+	private Subjects handleReturnData(String result) {
+		// TODO Auto-generated method stub
+
+		return null;
 	}
 
 }
