@@ -22,6 +22,7 @@ public class ThreadSocket extends Thread {
 		System.out.println("Socket address: " + socket.getInetAddress().getHostAddress());
 		System.out.println("Socket port: " + socket.getPort());
 		this.socket = socket;
+		
 	}
 
 	public void run() {
@@ -55,6 +56,7 @@ public class ThreadSocket extends Thread {
 
 				} else {
 					result = "Wrong";
+					
 				}
 
 			} catch (Exception e) {
@@ -72,6 +74,7 @@ public class ThreadSocket extends Thread {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		}
 	}
 
@@ -82,8 +85,10 @@ public class ThreadSocket extends Thread {
 			String url = "jdbc:mysql://127.0.0.1:3306/KETQUAHOCTAP";
 			conn = DriverManager.getConnection(url, "root", "");
 			sttm = conn.createStatement();
+			
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
+			
 		}
 	}
 

@@ -16,9 +16,11 @@ public class Server {
                 // Su dung multithread
                 // Khi co 1 client gui yeu cau toi thi se tao ra 1 thread phuc vu client do
                 new ThreadSocket(serverSocket.accept()).start();
+                
             }
-        } catch (IOException e) {
+        } catch (IOException e) {	
             System.out.println("Exception: " + e.getMessage());
+            
         }
     }
 }

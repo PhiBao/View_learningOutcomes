@@ -55,10 +55,12 @@ public class Main extends Application {
 					if (userName.getText().length() >= 9) {
 						// if it's 10th character then just setText to previous one
 						userName.setText(userName.getText().substring(0, 9));
+						
 					}
 				}
 			}
 		});
+		
 		userName.setPromptText("Username");
 		PasswordField pwBox = new PasswordField();
 		pwBox.setPromptText("Passwork");
@@ -86,12 +88,15 @@ public class Main extends Application {
 		actionTarget.setId("actionTarget");
 		actionTarget.setText("Sai tài khoản hoặc mật khẩu. Vui lòng nhập lại!");
 		actionTarget.setVisible(false);
-
+		
 		TableView<Subjects> table = new TableView<Subjects>();
+		Label infor = new Label();
 
 		btnLogin.setDisable(true);
 		userName.textProperty().addListener((observable, oldValue, newValue) -> {
+			
 			btnLogin.setDisable(newValue.trim().length() != 9);
+			
 		});
 
 		btnLogin.setOnAction(new EventHandler<ActionEvent>() {
@@ -100,30 +105,41 @@ public class Main extends Application {
 				// TODO Auto-generated method stub
 				try {
 					String resultFromServer = accept_Client(userName.getText(), pwBox.getText());
+					
 					if (resultFromServer.equals("Wrong")) {
+						
 						System.out.println(resultFromServer);
 						actionTarget.setVisible(true);
 						userName.setText("");
 						pwBox.setText("");
+						
 					} else if (resultFromServer.equals("DBError")) {
+						
 						System.out.println(resultFromServer);
 						Alert alert = new Alert(Alert.AlertType.INFORMATION);
 						alert.setTitle("Xin thứ lỗi!");
 						alert.setHeaderText("Thông báo:");
 						alert.setContentText("Lỗi kết nối Cơ sở dữ liệu. Xin hãy thử lại sau!");
 						alert.show();
+						
 						actionTarget.setVisible(false);
 						userName.setText("");
 						pwBox.setText("");
+						
 					} else {
+						
+						infor.setText(userName.getText());
+						
 						System.out.println(resultFromServer);
 						ObservableList<Subjects> list = handleReturnData(resultFromServer);
 						table.setItems(list);
 						window.setScene(scene2);
+						
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					
 				}
 			}
 
@@ -133,6 +149,7 @@ public class Main extends Application {
 				Subjects buffer[] = new Subjects[tmp.length / 2];
 				for (int i = 0; i < buffer.length; i++) {
 					buffer[i] = new Subjects();
+					
 				}
 				
 				int j = 0;
@@ -140,6 +157,7 @@ public class Main extends Application {
 					buffer[j].setSubjectName(tmp[i]);
 					buffer[j].setScore(tmp[i + 1]);
 					j++;
+					
 				}
 				
 				ObservableList<Subjects> list = FXCollections.observableArrayList(buffer);
@@ -162,10 +180,9 @@ public class Main extends Application {
 		hbBtnLogout.setAlignment(Pos.TOP_RIGHT);
 		hbBtnLogout.getChildren().add(btnLogout);
 
-		Label label1 = new Label("MSSV:");
-		Label label2 = new Label(userName.textProperty().get());
+		Label label = new Label("MSSV:");
 		HBox hbox = new HBox(10);
-		hbox.getChildren().addAll(label1, label2);
+		hbox.getChildren().addAll(label, infor);
 		hbox.setAlignment(Pos.CENTER);
 
 		TableColumn<Subjects, String> subjectNameCol = new TableColumn<Subjects, String>("Học phần");
@@ -190,6 +207,7 @@ public class Main extends Application {
 				pwBox.setText("");
 				actionTarget.setVisible(false);
 				window.setScene(scene1);
+				
 			}
 		});
 
@@ -208,24 +226,26 @@ public class Main extends Application {
 		System.out.println("Client is connected to socket server!");
 
 		return clientSocket;
+		
 	}
 
 	public String accept_Client(String userName, String passWord) throws Exception {
-
 		// Client: tao socket ket noi den server cho phep ket noi o cong 8039
 		Socket socket = connect();
 
-		// Tao luong ket noi den sever
-		// Tao luon gui di
+		// Tao luong gui du lieu len server
 		DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
-		// Tao luon nhan vao
+		outToServer.writeUTF((userName + passWord).trim());
+		
+		// Tao luon nhan vao du lieu tu server
 		DataInputStream inFromServer = new DataInputStream(socket.getInputStream());
-
-		outToServer.writeUTF((userName + passWord).trim());// gui du lieu len server
 		String result = inFromServer.readUTF();
-		System.out.println("Server send: " + result);// doc tu sever
+		
+		System.out.println("Server send: " + result);
 		socket.close();
+		
 		return result;
+		
 	}
 
 }
