@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -24,7 +25,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Main extends Application {
@@ -32,10 +32,11 @@ public class Main extends Application {
 	Stage window;
 	Scene scene1, scene2;
 
-	public static void Client(String[] args) {
+	public static void main(String[] args) {
 		launch(args);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void start(Stage primaryStage) {
 		window = primaryStage;
@@ -86,6 +87,8 @@ public class Main extends Application {
 		actionTarget.setText("Sai tài khoản hoặc mật khẩu. Vui lòng nhập lại!");
 		actionTarget.setVisible(false);
 
+		TableView<Subjects> table = new TableView<Subjects>();
+
 		btnLogin.setDisable(true);
 		userName.textProperty().addListener((observable, oldValue, newValue) -> {
 			btnLogin.setDisable(newValue.trim().length() != 9);
@@ -96,18 +99,53 @@ public class Main extends Application {
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				try {
-					if (accept_Client(userName.getText(), pwBox.getText()) != "Wrong") {
-						window.setScene(scene2);
-					} else {
+					String resultFromServer = accept_Client(userName.getText(), pwBox.getText());
+					if (resultFromServer.equals("Wrong")) {
+						System.out.println(resultFromServer);
 						actionTarget.setVisible(true);
 						userName.setText("");
 						pwBox.setText("");
+					} else if (resultFromServer.equals("DBError")) {
+						System.out.println(resultFromServer);
+						Alert alert = new Alert(Alert.AlertType.INFORMATION);
+						alert.setTitle("Xin thứ lỗi!");
+						alert.setHeaderText("Thông báo:");
+						alert.setContentText("Lỗi kết nối Cơ sở dữ liệu. Xin hãy thử lại sau!");
+						alert.show();
+						actionTarget.setVisible(false);
+						userName.setText("");
+						pwBox.setText("");
+					} else {
+						System.out.println(resultFromServer);
+						ObservableList<Subjects> list = handleReturnData(resultFromServer);
+						table.setItems(list);
+						window.setScene(scene2);
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+
+			private ObservableList<Subjects> handleReturnData(String resultFromServer) {
+				// TODO Auto-generated method stub
+				String[] tmp = resultFromServer.split("\\#");
+				Subjects buffer[] = new Subjects[tmp.length / 2];
+				for (int i = 0; i < buffer.length; i++) {
+					buffer[i] = new Subjects();
+				}
+				
+				int j = 0;
+				for (int i = 0; i < tmp.length; i += 2) {
+					buffer[j].setSubjectName(tmp[i]);
+					buffer[j].setScore(tmp[i + 1]);
+					j++;
+				}
+				
+				ObservableList<Subjects> list = FXCollections.observableArrayList(buffer);
+				return list;
+			}
+
 		});
 
 		Scene scene1 = new Scene(grid, 640, 480);
@@ -124,27 +162,21 @@ public class Main extends Application {
 		hbBtnLogout.setAlignment(Pos.TOP_RIGHT);
 		hbBtnLogout.getChildren().add(btnLogout);
 
-		Label label = new Label("MSSV:");
-		Text own = new Text();
-		own.setText("102170138");
-		own.setFont(new Font("Arial", 18));
+		Label label1 = new Label("MSSV:");
+		Label label2 = new Label(userName.textProperty().get());
 		HBox hbox = new HBox(10);
-		hbox.getChildren().addAll(label, own);
+		hbox.getChildren().addAll(label1, label2);
 		hbox.setAlignment(Pos.CENTER);
 
-		TableView<Subjects> table = new TableView<Subjects>();
-		final ObservableList<Subjects> data = FXCollections.observableArrayList(new Subjects("Giáo dục giới tính", 10));
+		TableColumn<Subjects, String> subjectNameCol = new TableColumn<Subjects, String>("Học phần");
+		subjectNameCol.setPrefWidth(500);
+		subjectNameCol.setCellValueFactory(new PropertyValueFactory<>("subjectName"));
 
-		TableColumn subjectCol = new TableColumn("Học phần");
-		subjectCol.setPrefWidth(500);
-		subjectCol.setCellValueFactory(new PropertyValueFactory<>("subjectName"));
-
-		TableColumn scoreCol = new TableColumn("Điểm thang 10");
+		TableColumn<Subjects, String> scoreCol = new TableColumn<Subjects, String>("Điểm thang 10");
 		scoreCol.setPrefWidth(300);
-		scoreCol.setCellValueFactory(new PropertyValueFactory("score"));
+		scoreCol.setCellValueFactory(new PropertyValueFactory<Subjects, String>("score"));
 
-		table.setItems(data);
-		table.getColumns().addAll(subjectCol, scoreCol);
+		table.getColumns().addAll(subjectNameCol, scoreCol);
 
 		VBox layout = new VBox();
 		layout.setSpacing(10);
@@ -189,18 +221,11 @@ public class Main extends Application {
 		// Tao luon nhan vao
 		DataInputStream inFromServer = new DataInputStream(socket.getInputStream());
 
-		outToServer.writeUTF(userName + passWord);// gui du lieu len server
+		outToServer.writeUTF((userName + passWord).trim());// gui du lieu len server
 		String result = inFromServer.readUTF();
 		System.out.println("Server send: " + result);// doc tu sever
 		socket.close();
-		// handleReturnData(result);
 		return result;
-	}
-
-	private Subjects handleReturnData(String result) {
-		// TODO Auto-generated method stub
-
-		return null;
 	}
 
 }

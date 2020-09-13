@@ -3,13 +3,14 @@ package application;
 public class Subjects {
 
 	private String subjectName;
-	private float score;
-	
-	public Subjects() {};
-	
-	public Subjects(String subjectName, float score) {
+	private String score;
+
+	public Subjects(String subjectName, String score) {
 		this.subjectName = subjectName;
 		this.score = score;
+	}
+	
+	public Subjects() {
 	}
 
 	public String getSubjectName() {
@@ -20,11 +21,11 @@ public class Subjects {
 		this.subjectName = subjectName;
 	}
 
-	public float getScore() {
+	public String getScore() {
 		return score;
 	}
 
-	public void setScore(float score) {
+	public void setScore(String score) {
 		this.score = score;
 	}
 

@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import application.Subjects;
 
 public class ThreadSocket extends Thread {
 
@@ -15,7 +14,6 @@ public class ThreadSocket extends Thread {
 	private Statement sttm;
 	private ResultSet rs;
 	private String sql;
-	public Subjects data = new Subjects();
 
 	public ThreadSocket(Socket socket) {
 
@@ -29,16 +27,12 @@ public class ThreadSocket extends Thread {
 	public void run() {
 		try {
 			String massageClient = "";
-
 			// Tao luong nhan du lieu tu client
 			DataInputStream din = new DataInputStream(socket.getInputStream());
-			// Tao luong gui du lieu toi client
-			DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
+			massageClient = din.readUTF();
 
 			System.out.println("Handle data. ");
-			// String subjects = null;
 			String result = "";
-			massageClient = din.readUTF();
 			String tmpTK = massageClient.substring(0, 9);
 			String tmpMK = massageClient.substring(9, massageClient.length());
 			System.out.println("Client send: TK - " + tmpTK + ", MK - " + tmpMK);
@@ -47,9 +41,18 @@ public class ThreadSocket extends Thread {
 				connectData();
 				sql = "SELECT * FROM TKSINHVIEN WHERE TaiKhoan = '" + tmpTK + "' AND MatKhau = '" + tmpMK + "'";
 				rs = sttm.executeQuery(sql);
-				if (rs.getMetaData() != null) {
-					System.out.println(rs.getMetaData());
-					result = "Done";
+				if (rs.next()) {
+					sql = "SELECT * FROM HOCPHANDAHOC WHERE Mssv = '" + tmpTK + "'";
+					rs = sttm.executeQuery(sql);
+					while (rs.next()) {
+						for (int i = 2; i <= 11; i++) {
+							if (rs.getString(i) != null) {
+								result += rs.getMetaData().getColumnName(i) + "#";
+								result += rs.getString(i) + "#";
+							}
+						}
+					}
+
 				} else {
 					result = "Wrong";
 				}
@@ -61,8 +64,10 @@ public class ThreadSocket extends Thread {
 
 			System.out.print(result);
 			Thread.sleep(1000);
-			// Gui du lieu xuong sever
-			dout.writeUTF(result);
+
+			// Tao luong gui du lieu toi client
+			DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
+			dout.writeUTF(result.trim());
 			dout.flush();
 
 		} catch (Exception e) {
