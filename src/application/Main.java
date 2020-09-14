@@ -69,6 +69,7 @@ public class Main extends Application {
 		HBox hbBtnLogin = new HBox(10);
 		hbBtnLogin.setAlignment(Pos.BOTTOM_RIGHT);
 		hbBtnLogin.getChildren().add(btnLogin);
+		btnLogin.setDefaultButton(true);
 
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
