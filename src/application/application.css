@@ -31,3 +31,70 @@
     -fx-background-color: linear-gradient(#61a2b1, #2A5058);
     -fx-effect: dropshadow( three-pass-box , rgba(0.0,0.0,0.0,0.6) , 5.0, 0.0 , 0.0 , 1.0 );
 }
+
+/*******************************************************************************
+ * Tables                                      *
+ ******************************************************************************/
+ 
+ .table-view, .tree-table-view
+{	
+	-fx-border-style: solid ;
+    -fx-border-color: #8b4513;
+    -fx-border-width: 2px;
+    -fx-background-color: #f0ffff;
+    -fx-min-width: 800px;
+    -fx-max-width: 800px;
+    -fx-min-height: 600px;
+    -fx-max-height: 700px;
+}
+
+.table-view .column-header, .tree-table-view .column-header 
+{
+    -fx-size: 60;
+    -fx-border-style: solid ;
+    -fx-border-color: #a9a9a9;
+    -fx-border-width: 0 2 2 0;
+    -fx-background-color: #f0ffff;
+}
+
+.table-view .show-hide-columns-button, .tree-table-view .show-hide-columns-button
+{
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label, .table-view .filler .label,
+.table-view .column-drag-header .label, .tree-table-view .column-header .label,
+.tree-table-view .filler .label, .tree-table-view .column-drag-header .label
+{
+    -fx-alignment: CENTER;
+}
+
+.table-row-cell, .tree-table-row-cell {
+    -fx-cell-size: 50px;
+}
+
+.table-cell {
+    -fx-border-color: #a9a9a9;
+    -fx-border-width: 0 2 2 0;
+    -fx-font-size: 18px;
+    -fx-font-family: "Roboto";
+    -fx-effect: dropshadow( gaussian , rgba(255.0,255.0,255.0,0.5) , 0.0,0.0,0.0,1.0 );
+    -fx-alignment: CENTER ;
+}
+
+.table-view *.scroll-bar:horizontal *.increment-button,
+.table-view *.scroll-bar:horizontal *.decrement-button {
+  -fx-background-color: null;
+  -fx-background-radius: 0;
+  -fx-background-insets: 0;
+  -fx-padding: 0;
+}
+
+.table-view *.scroll-bar:horizontal *.increment-arrow,
+.table-view *.scroll-bar:horizontal *.decrement-arrow {
+  -fx-background-color: null;
+  -fx-background-radius: 0;
+  -fx-background-insets: 0;
+  -fx-padding: 0;
+  -fx-shape: null;
+}
