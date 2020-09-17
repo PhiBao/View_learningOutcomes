@@ -139,8 +139,7 @@ public class Main extends Application {
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-					
+					e.printStackTrace();		
 				}
 			}
 
@@ -150,7 +149,6 @@ public class Main extends Application {
 				Subjects buffer[] = new Subjects[tmp.length / 2];
 				for (int i = 0; i < buffer.length; i++) {
 					buffer[i] = new Subjects();
-					
 				}
 				
 				int j = 0;
@@ -158,7 +156,6 @@ public class Main extends Application {
 					buffer[j].setSubjectName(tmp[i]);
 					buffer[j].setScore(tmp[i + 1]);
 					j++;
-					
 				}
 				
 				ObservableList<Subjects> list = FXCollections.observableArrayList(buffer);
@@ -201,14 +198,12 @@ public class Main extends Application {
 		layout.getChildren().addAll(hbBtnLogout, hbBtnTitle, hbox, table);
 
 		btnLogout.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent e) {
 				userName.setText("");
 				pwBox.setText("");
 				actionTarget.setVisible(false);
 				window.setScene(scene1);
-				
 			}
 		});
 

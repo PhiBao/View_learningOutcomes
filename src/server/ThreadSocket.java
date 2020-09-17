@@ -16,7 +16,6 @@ public class ThreadSocket extends Thread {
 	private String sql;
 
 	public ThreadSocket(Socket socket) {
-
 		System.out.println("Call to thread socket. ");
 		System.out.println("Socket is connected: " + socket.isConnected());
 		System.out.println("Socket address: " + socket.getInetAddress().getHostAddress());
@@ -55,8 +54,7 @@ public class ThreadSocket extends Thread {
 					}
 
 				} else {
-					result = "Wrong";
-					
+					result = "Wrong";					
 				}
 
 			} catch (Exception e) {
@@ -74,7 +72,6 @@ public class ThreadSocket extends Thread {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			
 		}
 	}
 
@@ -87,8 +84,7 @@ public class ThreadSocket extends Thread {
 			sttm = conn.createStatement();
 			
 		} catch (Exception e) {
-			System.out.println("Error: " + e);
-			
+			System.out.println("Error: " + e);	
 		}
 	}
 
