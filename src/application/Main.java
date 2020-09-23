@@ -207,7 +207,7 @@ public class Main extends Application {
 			}
 		});
 
-		scene2 = new Scene(layout, 800, 800);
+		scene2 = new Scene(layout, 800, 720);
 		scene2.getStylesheets().add(Main.class.getResource("application.css").toExternalForm());
 
 		window.setScene(scene1);

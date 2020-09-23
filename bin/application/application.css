@@ -2,6 +2,11 @@
 .root {
 -fx-background-color: #d2b48c;
 }
+
+.title {
+	-fx-background-color: #DDD;
+}
+
 .label {
     -fx-font-size: 18.0px;
     -fx-font-weight: bold;
@@ -38,14 +43,16 @@
  
  .table-view, .tree-table-view
 {	
-	-fx-border-style: solid ;
+	-fx-border-style: solid inside;
     -fx-border-color: #8b4513;
     -fx-border-width: 2px;
-    -fx-background-color: #f0ffff;
+    -fx-background-color: transparent;
     -fx-min-width: 800px;
     -fx-max-width: 800px;
     -fx-min-height: 600px;
     -fx-max-height: 700px;
+    -fx-border-insets: 10px;
+    -fx-border-radius: 5;
 }
 
 .table-view .column-header, .tree-table-view .column-header 

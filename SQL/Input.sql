@@ -1,22 +1,3 @@
-INSERT INTO `tksinhvien` (`TaiKhoan`, `MatKhau`) VALUES
-('102170100', 'sinhvien123'),
-('102170101', 'sinhvien123'),
-('102170102', 'sinhvien123'),
-('102170103', 'sinhvien123'),
-('102170104', 'sinhvien123'),
-('102170105', 'sinhvien123'),
-('102170106', 'sinhvien123'),
-('102170107', 'sinhvien123'),
-('102170108', 'sinhvien123'),
-('102170109', 'sinhvien123'),
-('102170110', 'sinhvien123'),
-('102170111', 'sinhvien123'),
-('102170112', 'sinhvien123'),
-('102170113', 'sinhvien123'),
-('102170114', 'sinhvien123'),
-('102170115', 'sinhvien123'),
-('102170116', 'sinhvien123')
-
 INSERT INTO `hocphandahoc` (`Mssv`, `ToanCaoCap`, `HoaHocDaiCuong`, `PhapLuatDaiCuong`, `VatLy1`, `VatLy2`, `XacSuatThongKe`, `PhuongPhapTinh`, `DaiSo`, `MacLenin`, `DLCMVSVN`) VALUES
 ('102170100', '6.75', '7.25', '8.75', '6', '9.5', '7.25', '8', '9','10','9.75'),
 ('102170101', null, '8', '8', '9', '8.75', '6.25', '4', '5.5', '6.5', '6.75'),
@@ -35,3 +16,22 @@ INSERT INTO `hocphandahoc` (`Mssv`, `ToanCaoCap`, `HoaHocDaiCuong`, `PhapLuatDai
 ('102170114', null, null, '8', '8', '7', '8', '8', '8', '5', '6.75'),
 ('102170115', '6', '8', null, '6', '6.25', '6.75', '75', '8.35', '7.5', '6.5'),
 ('102170116', '5.5', '6', '5', '5.3', '4.6', '4.9', '8', null, '8', '8')
+
+INSERT INTO `tksinhvien` (`TaiKhoan`, `MatKhau`) VALUES
+('102170100', 'sinhvien123'),
+('102170101', 'sinhvien123'),
+('102170102', 'sinhvien123'),
+('102170103', 'sinhvien123'),
+('102170104', 'sinhvien123'),
+('102170105', 'sinhvien123'),
+('102170106', 'sinhvien123'),
+('102170107', 'sinhvien123'),
+('102170108', 'sinhvien123'),
+('102170109', 'sinhvien123'),
+('102170110', 'sinhvien123'),
+('102170111', 'sinhvien123'),
+('102170112', 'sinhvien123'),
+('102170113', 'sinhvien123'),
+('102170114', 'sinhvien123'),
+('102170115', 'sinhvien123'),
+('102170116', 'sinhvien123')
