@@ -14,7 +14,7 @@ CREATE TABLE `ketquahoctap`.`hocphandahoc`
 
 CREATE TABLE `ketquahoctap`.`tksinhvien` 
 (
- `TaiKhoan` DECIMAL(9) NOT NULL PRIMARY KEY,
+ `TaiKhoan` DECIMAL(9, 0) NOT NULL PRIMARY KEY,
  `MatKhau` TEXT CHARACTER SET utf8 COLLATE utf8_vietnamese_ci NOT NULL, 
  CONSTRAINT FK_TaiKhoan FOREIGN KEY (TaiKhoan) REFERENCES hocphandahoc(Mssv)
 ) ENGINE = InnoDB;

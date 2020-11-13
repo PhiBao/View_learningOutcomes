@@ -1,14 +1,20 @@
 package application;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.List;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
+import models.TotalScoreEntity;
 import javafx.scene.Scene;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -55,12 +61,12 @@ public class Main extends Application {
 					if (userName.getText().length() >= 9) {
 						// if it's 10th character then just setText to previous one
 						userName.setText(userName.getText().substring(0, 9));
-						
+
 					}
 				}
 			}
 		});
-		
+
 		userName.setPromptText("Username");
 		PasswordField pwBox = new PasswordField();
 		pwBox.setPromptText("Passwork");
@@ -89,76 +95,71 @@ public class Main extends Application {
 		actionTarget.setId("actionTarget");
 		actionTarget.setText("Sai tài khoản hoặc mật khẩu. Vui lòng nhập lại!");
 		actionTarget.setVisible(false);
-		
-		TableView<Subjects> table = new TableView<Subjects>();
+
+		TableView<TotalScoreEntity> table = new TableView<TotalScoreEntity>();
 		Label infor = new Label();
 
 		btnLogin.setDisable(true);
 		userName.textProperty().addListener((observable, oldValue, newValue) -> {
-			
+
 			btnLogin.setDisable(newValue.trim().length() != 9);
-			
+
 		});
 
 		btnLogin.setOnAction(new EventHandler<ActionEvent>() {
+			@SuppressWarnings("unused")
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				try {
-					String resultFromServer = accept_Client(userName.getText(), pwBox.getText());
-					
-					if (resultFromServer.equals("Wrong")) {
-						
-						System.out.println(resultFromServer);
-						actionTarget.setVisible(true);
-						userName.setText("");
-						pwBox.setText("");
-						
-					} else if (resultFromServer.equals("DBError")) {
-						
+					List<TotalScoreEntity> resultFromServer = accept_Client(userName.getText(), pwBox.getText());
+
+					if (resultFromServer == null) {
+
 						System.out.println(resultFromServer);
 						Alert alert = new Alert(Alert.AlertType.INFORMATION);
 						alert.setTitle("Xin thứ lỗi!");
 						alert.setHeaderText("Thông báo:");
-						alert.setContentText("Lỗi kết nối Cơ sở dữ liệu. Xin hãy thử lại sau!");
+						alert.setContentText("Lỗi mạng. Xin hãy kiểm tra đường truyền");
 						alert.show();
-						
+
 						actionTarget.setVisible(false);
 						userName.setText("");
 						pwBox.setText("");
-						
-					} else {
-						
-						infor.setText(userName.getText());
-						
+					}
+
+					else if (resultFromServer.get(0).getScore1() == -1) {
+
+						actionTarget.setVisible(true);
+						userName.setText("");
+						pwBox.setText("");
+					}
+
+					else {
+
 						System.out.println(resultFromServer);
-						ObservableList<Subjects> list = handleReturnData(resultFromServer);
+						infor.setText(userName.getText());
+
+						ObservableList<TotalScoreEntity> list = handleReturnData(resultFromServer);
 						table.setItems(list);
 						window.setScene(scene2);
-						
 					}
+
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();		
+					e.printStackTrace();
 				}
 			}
 
-			private ObservableList<Subjects> handleReturnData(String resultFromServer) {
+			private ObservableList<TotalScoreEntity> handleReturnData(List<TotalScoreEntity> resultFromServer)
+					throws JsonParseException, JsonMappingException, IOException {
 				// TODO Auto-generated method stub
-				String[] tmp = resultFromServer.split("\\#");
-				Subjects buffer[] = new Subjects[tmp.length / 2];
-				for (int i = 0; i < buffer.length; i++) {
-					buffer[i] = new Subjects();
-				}
-				
-				int j = 0;
-				for (int i = 0; i < tmp.length; i += 2) {
-					buffer[j].setSubjectName(tmp[i]);
-					buffer[j].setScore(tmp[i + 1]);
-					j++;
-				}
-				
-				ObservableList<Subjects> list = FXCollections.observableArrayList(buffer);
+
+				/*
+				 * ObjectMapper objectMapper = new ObjectMapper(); ScoreResponse scoreResponse =
+				 * objectMapper.readValue(resultFromServer, ScoreResponse.class);
+				 */
+				ObservableList<TotalScoreEntity> list = FXCollections.observableArrayList(resultFromServer);
 				return list;
 			}
 
@@ -183,15 +184,29 @@ public class Main extends Application {
 		hbox.getChildren().addAll(label, infor);
 		hbox.setAlignment(Pos.CENTER);
 
-		TableColumn<Subjects, String> subjectNameCol = new TableColumn<Subjects, String>("Học phần");
-		subjectNameCol.setPrefWidth(500);
-		subjectNameCol.setCellValueFactory(new PropertyValueFactory<>("subjectName"));
+		TableColumn<TotalScoreEntity, String> semesterCol = new TableColumn<TotalScoreEntity, String>("Năm học");
+		semesterCol.setPrefWidth(200);
+		semesterCol.setCellValueFactory(new PropertyValueFactory<>("semester"));
 
-		TableColumn<Subjects, String> scoreCol = new TableColumn<Subjects, String>("Điểm thang 10");
-		scoreCol.setPrefWidth(300);
-		scoreCol.setCellValueFactory(new PropertyValueFactory<Subjects, String>("score"));
+		TableColumn<TotalScoreEntity, String> score1Col = new TableColumn<TotalScoreEntity, String>("Điểm TBC T4");
+		score1Col.setPrefWidth(150);
+		score1Col.setCellValueFactory((new PropertyValueFactory<TotalScoreEntity, String>("score1")));
 
-		table.getColumns().addAll(subjectNameCol, scoreCol);
+		TableColumn<TotalScoreEntity, String> score2Col = new TableColumn<TotalScoreEntity, String>(
+				"Điểm TBC Học bổng");
+		score2Col.setPrefWidth(200);
+		score2Col.setCellValueFactory(new PropertyValueFactory<TotalScoreEntity, String>("score2"));
+
+		TableColumn<TotalScoreEntity, String> resultTypeCol = new TableColumn<TotalScoreEntity, String>(
+				"Xếp loại học tập");
+		resultTypeCol.setPrefWidth(150);
+		resultTypeCol.setCellValueFactory(new PropertyValueFactory<TotalScoreEntity, String>("resultType"));
+
+		TableColumn<TotalScoreEntity, String> activityScoreCol = new TableColumn<TotalScoreEntity, String>("DRL");
+		activityScoreCol.setPrefWidth(100);
+		activityScoreCol.setCellValueFactory(new PropertyValueFactory<TotalScoreEntity, String>("activityScore"));
+
+		table.getColumns().addAll(semesterCol, score1Col, score2Col, resultTypeCol, activityScoreCol);
 
 		VBox layout = new VBox();
 		layout.setSpacing(10);
@@ -222,26 +237,27 @@ public class Main extends Application {
 		System.out.println("Client is connected to socket server!");
 
 		return clientSocket;
-		
+
 	}
 
-	public String accept_Client(String userName, String passWord) throws Exception {
+	public List<TotalScoreEntity> accept_Client(String userName, String passWord) throws Exception {
 		// Client: tao socket ket noi den server cho phep ket noi o cong 8039
 		Socket socket = connect();
 
 		// Tao luong gui du lieu len server
 		DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
 		outToServer.writeUTF((userName + passWord).trim());
-		
+
 		// Tao luon nhan vao du lieu tu server
-		DataInputStream inFromServer = new DataInputStream(socket.getInputStream());
-		String result = inFromServer.readUTF();
-		
-		System.out.println("Server send: " + result);
+		ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
+		@SuppressWarnings("unchecked")
+		List<TotalScoreEntity> result = (List<TotalScoreEntity>) objectInput.readObject();
+
+		// System.out.println("Server send: " + result);
 		socket.close();
-		
+
 		return result;
-		
+
 	}
 
 }

@@ -49,8 +49,8 @@
     -fx-background-color: transparent;
     -fx-min-width: 800px;
     -fx-max-width: 800px;
-    -fx-min-height: 600px;
-    -fx-max-height: 700px;
+    -fx-min-height: 540px;
+    -fx-max-height: 540px;
     -fx-border-insets: 10px;
     -fx-border-radius: 5;
 }
